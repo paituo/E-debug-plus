@@ -67,7 +67,7 @@ INT EAnalysis::UpdateSection(ULONG addr) {
 
 INT EAnalysis::AddSection(ULONG addr) {
 
-	sectionAlloc addsection;
+	sectionAlloc addsection = { 0 };
 	t_memory* T_memory;
 
 	T_memory = Findmemory(addr);
@@ -136,6 +136,10 @@ BOOL EAnalysis::EStaticLibInit() {    //易语言静态编译 识别初始化
 	else {
 		pEnteyInfo = (PEENTRYINFO)O2V(EntryAddr, 0);
 	}
+
+	// 2019-04-25 WYT 解决由于重新更新节数据而导致的pEnteyInfo指针无效BUG
+	memcpy(&_EnteyInfo, pEnteyInfo, sizeof(_EnteyInfo));
+	pEnteyInfo = &_EnteyInfo;
 
 	dwUsercodeStart = pEnteyInfo->dwUserCodeStart;
 

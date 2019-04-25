@@ -61,9 +61,12 @@ public:
 
 	vector<sectionAlloc> SectionMap;    //维护一份内存拷贝表
 
-	ULONG DLLCALL=0;		//保存DLL_CALL地址,在查找DLL命令的时候会用到
+	ULONG DLLCALL = 0;					//保存DLL_CALL地址,在查找DLL命令的时候会用到
+	ULONG KRNLNFUNCTION = 0;			//保存Krn函数调用地址,在查找Krn函数调用时候会用到
 
 	PEENTRYINFO pEnteyInfo; // entry info
+
+	_ENTRYINFO _EnteyInfo; // entry info
 private:
 protected:
 };

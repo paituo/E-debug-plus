@@ -33,8 +33,16 @@ void CPage3::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TREE1, m_Tree);
 	DDX_Control(pDX, IDC_STATIC_BOX, ControlType);
+	DDX_Control(pDX, IDC_EDIT_WINDOWNAME, WindowName);
+	DDX_Control(pDX, IDC_EDIT_WINDOWID, WindowID);
+	DDX_Control(pDX, IDC_EDIT_CONTROLNAME, ControlName);
+	DDX_Control(pDX, IDC_EDIT_CONTROLID, ControlID);
+	DDX_Control(pDX, IDC_EDIT_CONTROLCLASS, ControlClass);
 }
 
+CDialog* CPage3::GetHwnd() {
+	return this;
+}
 
 BEGIN_MESSAGE_MAP(CPage3, CDialog)
 	ON_NOTIFY(TVN_ITEMEXPANDING, IDC_TREE1, &CPage3::OnTvnItemexpandingTree1)
@@ -205,7 +213,7 @@ BOOL CPage3::OnInitDialog() {
 		for (UINT j = 0;j < Window[i].ControlCount;j++) {
 			EipAddr = EipAddr + 4;
 			ControlID.Format(L"0x%X", *(unsigned long*)pEAnalysisEngine->O2V(EipAddr, r_index));
-			Window[i].ControlID.push_back(m_Tree.InsertItem(ControlID,m_WindowInfo.WindowId[i])); //±£´æ¿Ø¼þID
+			Window[i].ControlID.push_back(m_Tree.InsertItem(ControlID, m_WindowInfo.WindowId[i])); //±£´æ¿Ø¼þID
 		}
 		
 		for (UINT t = 0;t < Window[i].ControlCount;t++) {          //½âÎö¿Ø¼þ
@@ -425,7 +433,6 @@ void CPage3::OnTvnItemexpandingTree1(NMHDR *pNMHDR, LRESULT *pResult)   //µã»÷Ò×
 	else {
 		*pResult = 0;
 	}
-
 }
 
 
@@ -436,17 +443,19 @@ void CPage3::OnTvnSelchangingTree1(NMHDR *pNMHDR, LRESULT *pResult)  //¿Ø¼þ±»µ¥»
 	USES_CONVERSION;
 	if (m_Tree.GetChildItem(pNMTreeView->itemNew.hItem) == 0) {   //ËµÃ÷Îª¿Ø¼þ
 		
-		
-
-		
-		DWORD m_index = m_Tree.GetItemData(m_Tree.GetParentItem(pNMTreeView->itemNew.hItem));
+		DWORD m_ParentIndex = m_Tree.GetItemData(m_Tree.GetParentItem(pNMTreeView->itemNew.hItem));
 		DWORD n_index = m_Tree.GetItemData(pNMTreeView->itemNew.hItem);
 		
-		if (!Window[m_index].ControlType[n_index].empty()) {
-			ControlType.SetWindowText(A2W(Window[m_index].ControlType[n_index].c_str()));
-		}
+		//if (!Window[m_index].ControlType[n_index].empty()) {
+			// ControlType.SetWindowText(A2W(Window[m_index].ControlType[n_index].c_str()));
 
+		//WindowName.SetWindowText(str);
+		WindowID.SetWindowText(m_Tree.GetItemText(m_Tree.GetParentItem(pNMTreeView->itemNew.hItem)));
+		//ControlName.SetWindowText(A2W(Window[m_ParentIndex].ControlType[n_index].c_str()));
+		ControlID.SetWindowText(m_Tree.GetItemText(pNMTreeView->itemNew.hItem));
+		ControlClass.SetWindowText(A2W(Window[m_ParentIndex].ControlType[n_index].c_str()));
 
+		//}
 	}
 
 	*pResult = 0;

@@ -131,10 +131,18 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	CDialog* GetHwnd();
+
 	virtual BOOL OnInitDialog();
 	CTreeCtrl m_Tree;
 	CImageList m_ICO;
 	CStatic ControlType;
+	CEdit WindowName;
+	CEdit WindowID;
+	CEdit ControlName;
+	CEdit ControlID;
+	CEdit ControlClass;
+
 	vector<WindowPropery> Window;
 
 	afx_msg void OnTvnItemexpandingTree1(NMHDR *pNMHDR, LRESULT *pResult);

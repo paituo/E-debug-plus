@@ -116,6 +116,24 @@ BOOL CPage2::OnInitDialog() {
 			pszApinameAddr += 4;
 		}
 
+		// 2019-04-25 WYT 补充新过程
+		// 序号从API后面开始
+		DWORD krnlBeginOrder = m_api.GetItemCount();
+		vector<string> krnlCmd =
+		{ "MADir", "MAFindClose", "MACopyConstAry", "MANotifyFreeFunc",
+			"MAReadPackedObjectProperty", "MAWritePackedObjectProperty", "InitUserProgram"};
+		
+		nPos = krnlBeginOrder;
+		for (UINT i = 0; i < krnlCmd.size(); i++) {
+			order.Empty();
+			order.Format(L"%d", krnlBeginOrder + i);
+			m_api.InsertItem(nPos, order);    //序号
+			m_api.SetItemData(nPos, krnlBeginOrder + i);       //ID号便是数据
+			m_api.SetItemText(nPos, 1, _T("Krnln"));
+			m_api.SetItemText(nPos, 2, A2W(krnlCmd[i].c_str()));
+			nPos++;
+		}
+
 		byte ComCall[6] = { 0xB8, 0x90, 0x90, 0x00, 0x00 ,0xE8 };
 		byte *pTmp = (byte*)pEAnalysisEngine->O2V(pEAnalysisEngine->dwUsercodeStart, 0);
 
@@ -133,15 +151,25 @@ BOOL CPage2::OnInitDialog() {
 			dwResult += offset;
 
 			DWORD TEMP = (pEAnalysisEngine->O2V(dwResult + 6, 0));
-			if (IsBadReadPtr((DWORD*)TEMP, 4) == 0) {
-				DWORD CALLADDR = dwResult + 5 + 5 + *(DWORD*)TEMP;
-				CALLADDR = pEAnalysisEngine->O2V(CALLADDR + 2, 0);
-				if (IsBadReadPtr((DWORD*)CALLADDR, 4) == 0 && *(DWORD*)CALLADDR == pEAnalysisEngine->DLLCALL) {
-					ORDER = *(DWORD*)(pEAnalysisEngine->O2V(dwResult + 1, 0));
-					m_map[ORDER].push_back(dwResult);
-					Insertname(dwResult, NM_COMMENT, W2A(m_api.GetItemText(ORDER, 2)));
-				}
+			if (IsBadReadPtr((DWORD*)TEMP, 4) != 0)
+				continue;
+
+			DWORD CALLADDR = dwResult + 5 + 5 + *(DWORD*)TEMP;
+			CALLADDR = pEAnalysisEngine->O2V(CALLADDR + 2, 0);
+			if (IsBadReadPtr((DWORD*)CALLADDR, 4) != 0)
+				continue;
+
+			if (*(DWORD*)CALLADDR == pEAnalysisEngine->DLLCALL) {
+				ORDER = *(DWORD*)(pEAnalysisEngine->O2V(dwResult + 1, 0));
+				m_map[ORDER].push_back(dwResult);
+				Insertname(dwResult, NM_COMMENT, W2A(m_api.GetItemText(ORDER, 2)));
 			}
+			else if (*(DWORD*)CALLADDR == pEAnalysisEngine->KRNLNFUNCTION) {
+				ORDER = *(DWORD*)(pEAnalysisEngine->O2V(dwResult + 1, 0));
+				m_map[krnlBeginOrder + ORDER].push_back(dwResult);
+				Insertname(dwResult, NM_COMMENT, W2A(m_api.GetItemText(krnlBeginOrder + ORDER, 2)));
+			}
+
 			dwResult += sizeof(ComCall);
 			pTmp += offset + sizeof(ComCall);
 			dwSecSize -= offset + sizeof(ComCall);

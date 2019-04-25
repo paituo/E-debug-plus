@@ -81,12 +81,12 @@ BOOL EnumEsig() {
 						strcat_s(lpMapPath,FindFileData2.cFileName);
 						LoadSig(lpMapPath,FindFileData.cFileName);	
 					} while (FindNextFileA(hFind2, &FindFileData2));
-					CloseHandle(hFind2);
+					FindClose(hFind2);
 				}
 			}
 		}
 	} while (FindNextFileA(hFind, &FindFileData));
-	CloseHandle(hFind);
+	FindClose(hFind);
 	
 	return true;
 }

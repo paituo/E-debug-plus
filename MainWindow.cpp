@@ -82,6 +82,12 @@ BOOL CMainWindow::OnInitDialog() {
 		m_page2.MoveWindow(&rc);
 		Tab_HWND.push_back(m_page2.GetHwnd());
 	}
+
+	m_Tab.InsertItem(3, _T("窗口识别")); //初始化窗口识别窗口
+	m_page3.Create(IDD_PAGE3, &m_Tab);
+	m_page3.MoveWindow(&rc);
+	Tab_HWND.push_back(m_page3.GetHwnd());		//第三个窗口必定为窗口识别
+
 	
 	m_Tab.SetCurSel(1);
 	return true;

@@ -91,7 +91,7 @@ BOOL CPage1::OnInitDialog() {
 		vector<string> krnlCmd =
 		{ "错误回调", "DLL命令", "三方支持库命令", "核心支持库命令",
 			"读取组件属性", "设置组件属性", "分配内存", "重新分配内存",
-			"释放内存", "结束", "窗口消息循环", "载入启动窗口", "初始化" };
+			"释放内存", "结束", "窗口消息循环", "载入启动窗口", "Krn函数调用" };
 
 		Insertname(pEAnalysisEngine->dwUsercodeStart, NM_COMMENT, "用户代码段开始");
 
@@ -117,6 +117,9 @@ BOOL CPage1::OnInitDialog() {
 			dwPoint = pEAnalysisEngine->GetPoint(pEAnalysisEngine->O2V(dwKrnlEntry, index));
 			if (i == 1) {				//获取DLL命令调用地址
 				pEAnalysisEngine->DLLCALL = dwKrnlEntry;
+			}
+			else if (i == 12) {			//获取Krn函数调用命令调用地址
+				pEAnalysisEngine->KRNLNFUNCTION = dwKrnlEntry;
 			}
 			Insertname(dwPoint, NM_LABEL, (char*)krnlCmd[i].c_str());
 		}
